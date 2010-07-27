@@ -131,14 +131,12 @@ Installation from RubyGems
     end
   end
 
-== Contributing
-
-Please see the {ActiveMerchant Guide to Contributing}[http://github.com/Shopify/active_merchant/wikis/contributing] for information on adding a new gateway to ActiveMerchant.
-
   merchant_id = '123456789'
   user = 'beanstream_user'
   password = 'beanstream_password'
   amount = 2000
+  update_amount = 1000
+  pass_code = 'beanstream_passcode'
 
   gateway = ActiveMerchant::Billing::BeanstreamGateway.new(
                                                          :login => merchant_id,
@@ -154,7 +152,7 @@ Please see the {ActiveMerchant Guide to Contributing}[http://github.com/Shopify/
                                                      :verification_value => 123
                                                      )
   # Make recurring payment for the amount
-  response = gateway.recurring(amount, creditcard, {
+  recur_response = gateway.recurring(amount, creditcard, {
                                :recurring_billing => {
                                  :end_of_month => '0',
                                  :tax1 => 0,
@@ -178,4 +176,37 @@ Please see the {ActiveMerchant Guide to Contributing}[http://github.com/Shopify/
                                :zip => 'H4D1W9'
                              },
                              :email => 'foo@example.com'})
+
+
+  update_gateway = ActiveMerchant::Billing::BeanstreamGateway.new(
+                                                         :login => merchant_id,
+                                                         :pass_code => pass_code
+                                                         )
+
+  updated_response = update_gateway.update_recurring( update_amount, credit_card,
+                                     { :order_id =>  "ORDER#{Time.now.to_i}", :account_id => recur_response.params['rbAccountId'] }
+                                     )
+
+
+  cancelled_response = update_gateway.cancel_recurring(:account_id => recur_response.params['rbAccountId'] )
+
+
+  report_gateway = ActiveMerchant::Billing::BeanstreamGateway.new(
+                                                         :login => 'CompanyName',
+                                                         :user => user,
+                                                         :password => password
+                                                          )
+
+  transaction_report_response = report_gateway.transaction_report(
+          :start_year => '2010', :end_year => '2010',
+          :start_month => '7', :end_month => '7',
+          :start_day => '13', :end_day => '14'
+        )
+
+  today_transaction_report_response = report_gateway.today_report()
+
+
+== Contributing
+
+Please see the {ActiveMerchant Guide to Contributing}[http://github.com/Shopify/active_merchant/wikis/contributing] for information on adding a new gateway to ActiveMerchant.
 
