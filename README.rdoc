@@ -131,6 +131,8 @@ Installation from RubyGems
     end
   end
 
+===================================================================================================================================
+
   merchant_id = '123456789'
   user = 'beanstream_user'
   password = 'beanstream_password'
